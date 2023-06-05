@@ -82,8 +82,9 @@ class FunctionNode(object):
         self.parent = old_parent
 
     def get_rule_signature(self):
-        """ The rule signature is used to pair up FunctionNodes with GrammarRules in computing log probability
-            So it needs to be synced to GrammarRule.get_rule_signature and provide a unique identifier
+        """ 
+        The rule signature is used to pair up FunctionNodes with GrammarRules in computing log probability
+        So it needs to be synced to GrammarRule.get_rule_signature and provide a unique identifier
         """
         sig = [self.returntype, self.name]
         if self.args is not None:
@@ -91,7 +92,8 @@ class FunctionNode(object):
         return tuple(sig)
 
     def __copy__(self, shallow=False):
-        """Copy a function node.
+        """
+        Copy a function node.
 
         Arguments
         ---------
@@ -129,7 +131,8 @@ class FunctionNode(object):
         return not self.is_nonfunction()
 
     def is_leaf(self):
-        """Returns True if none of the kids are FunctionNodes, meaning this should be considered a "leaf".
+        """
+        Returns True if none of the kids are FunctionNodes, meaning this should be considered a "leaf".
 
         Note
         ----
@@ -153,7 +156,8 @@ class FunctionNode(object):
         return True
 
     def as_list(self, d=0, bv_names=None):
-        """Returns a list representation of the FunctionNode with function/self.name as the first element.
+        """
+        Returns a list representation of the FunctionNode with function/self.name as the first element.
 
         This function is subclassed so by BVAdd and BVUse so that those handle other cases
 
@@ -180,10 +184,9 @@ class FunctionNode(object):
     # --------------------------------------------------------------------------------------------------------
 
     def quickstring(self):
-        """A (maybe??) faster string function used for hashing.
-
+        """
+        A (maybe??) faster string function used for hashing.
         Doesn't handle any details and is meant to just be quick.
-
         """
         if self.args is None:
             return str(self.name)  # simple call
@@ -207,10 +210,9 @@ class FunctionNode(object):
 
 
     def liststring(self, cons="cons_"):
-        """This "evals" cons_ so that we can conveniently build lists (of lists) without having to eval.
-
+        """
+        This "evals" cons_ so that we can conveniently build lists (of lists) without having to eval.
         Mainly useful for combinatory logic, or "pure" trees
-
         """
         if self.args is None:
             return self.name
@@ -334,7 +336,8 @@ class FunctionNode(object):
         return self.args is None or len(list(filter(isFunctionNode, self.args))) == 0
 
     def __iter__(self):
-        """Iterater for subnodes.
+        """
+        Iterater for subnodes.
 
         Note
         ----
@@ -368,7 +371,8 @@ class FunctionNode(object):
                     yield self.args[i]
 
     def string_below(self, sep=" "):
-        """The string of terminals (leaves) below the current FunctionNode in the parse tree.
+        """
+        The string of terminals (leaves) below the current FunctionNode in the parse tree.
 
         Arguments
         ---------
@@ -443,7 +447,8 @@ class FunctionNode(object):
     # get a description of the input and output types
     # if collapse_terminal then we just map non-FunctionNodes to "TERMINAL"
     def type(self):
-        """The type of a FunctionNode is defined to be its returntype if it's not a lambda, or is defined
+        """
+        The type of a FunctionNode is defined to be its returntype if it's not a lambda, or is defined
         to be the correct (recursive) lambda structure if it is a lambda.
 
         For instance (lambda x. lambda y . (and (empty? x) y))
@@ -471,8 +476,9 @@ class FunctionNode(object):
             return (self.args[0].type(), t)
 
     def is_canonical_order(self, symmetric_ops):
-        """Take a set of symmetric (commutative) ops (plus, minus, times, etc, not divide) and asserts that
-            the LHS ordering is less than the right (to prevent)
+        """
+        Take a set of symmetric (commutative) ops (plus, minus, times, etc, not divide) and asserts that
+        the LHS ordering is less than the right (to prevent)
 
         This is useful for removing duplicates of nodes. For instance,
 
@@ -484,7 +490,6 @@ class FunctionNode(object):
 
         This function essentially checks if the tree is in sorted (alphbetical) order, but only for
         functions whose name is in symmetric_ops.
-
         """
         if self.nargs() < 1: # None or zero args
             return True
@@ -500,7 +505,8 @@ class FunctionNode(object):
         return all([x.is_canonical_order(symmetric_ops) for x in self.argFunctionNodes() ])
 
     def replace_subnodes(self, predicate, replace):
-        """Set all nodes satifying predicate to a copy of replace.
+        """
+        Set all nodes satifying predicate to a copy of replace.
 
         Note: we must fix probabilities after this since they may not be right--we can copy into a place
             where a lambda is defined.
@@ -511,11 +517,11 @@ class FunctionNode(object):
             n.setto(copy(replace))
 
     def partial_subtree_root_match(self, y):
-        """Does *y* match from my root?
+        """
+        Does *y* match from my root?
 
         A partial tree here is one with some nonterminals (see random_partial_subtree) that
         are not expanded
-
         """
         if isFunctionNode(y):
             if (y.returntype != self.returntype) or \
@@ -548,7 +554,8 @@ class FunctionNode(object):
         return False
 
     def random_partial_subtree(self, p=0.5):
-        """Generate a random partial subtree of me.
+        """
+        Generate a random partial subtree of me.
 
         We do this because there are waay too many unique subtrees to enumerate, and this allows a nice
         variety of structures
@@ -604,7 +611,6 @@ class FunctionNode(object):
     def uniquify_bv(self, remap=None):
         """
         Go through and make each of my uuids on BVUseFunctionNodes unique
-
         """
         from uuid import uuid4
 
@@ -624,7 +630,8 @@ class FunctionNode(object):
             a.uniquify_bv(remap)
 
     def iterate_subnodes(self, grammar, t=None, d=0, predicate=lambdaTrue, yield_depth=False, recurse_up=False):
-        """Iterate through all subnodes of node *t*, while updating the added rules (bound variables)
+        """
+        Iterate through all subnodes of node *t*, while updating the added rules (bound variables)
         so that at each subnode, the grammar is accurate to what it was.
 
         Arguments
@@ -830,7 +837,7 @@ def schemestring(x, d=0, bv_names=None):
             if x.args is None:
                 return name
             elif isinstance(x, BVAddFunctionNode):
-                assert name is 'lambda'
+                assert name == 'lambda'
                 return "(%s (%s) %s)" % (name, x.added_rule.name,
                                          [schemestring(a, d+1, bv_names=bv_names) for a in x.args])
             else:
@@ -936,8 +943,3 @@ def pystring(x, d=0, bv_names=None):
             del bv_names[x.added_rule.name]
 
         return ret
-
-
-
-
-

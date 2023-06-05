@@ -187,7 +187,7 @@ def display_option_summary(obj):
     for slot in dir(obj):
         attr = getattr(obj, slot)
         if not isinstance(attr, (types.BuiltinFunctionType, types.FunctionType, types.MethodType)) \
-           and (slot is not "__doc__") and (slot is not "__module__"):
+           and (slot != "__doc__") and (slot != "__module__"):
             print("#", slot, "=", attr)
     print("#"*90)
 
