@@ -127,8 +127,10 @@ class MetropolisHastingsSampler(Sampler):
             raise StopIteration
         else:
             for _ in range(self.skip+1):
-
-                self.proposal, fb = self.proposer(self.current_sample)
+                try:
+                    self.proposal, fb = self.proposer(self.current_sample)
+                except RecursionError:
+                    continue
 
                 assert self.proposal is not self.current_sample, "*** Proposal cannot be the same as the current sample!"
                 assert self.proposal.value is not self.current_sample.value, "*** Proposal cannot be the same as the current sample!"

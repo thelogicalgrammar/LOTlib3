@@ -157,6 +157,7 @@ class Hypothesis(object):
     #  These are just handy:
     def __str__(self):
         return self.display % str(self.value)
+    
     def __repr__(self):
         return str(self)
 

@@ -202,6 +202,7 @@ class Grammar(CommonEqualityMixin):
                     a.parent = fn
 
             return fn
+        
         elif isinstance(x, FunctionNode): # this will let us finish generation of a partial tree
 
             x.args = [ self.generate(a) for a in x.args]
