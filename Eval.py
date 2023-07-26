@@ -84,5 +84,5 @@ def register_primitive(function, name=None):
     if name is None: # if we don't specify a name
         name = function.__name__
 
-        builtins.__dict__[name] = function
+    builtins.__dict__[name] = function
 
