@@ -7,8 +7,10 @@ from LOTlib3.Eval import primitive, register_primitive
 from collections import Counter
 from stitch_core import compress
 from math import log, exp
+import re
+from copy import deepcopy
 
-from LOTlib3.StitchBindings.python_to_stitch import python_to_stitch
+from LOTlib3.StitchBindings.python_to_stitch import python_to_stitch, parse_function_calls
 from LOTlib3.StitchBindings.stitch_to_python import stitch_to_python, abstraction_to_python
 
 
@@ -180,6 +182,8 @@ def compress_and_transform(
         }
     else:
         additional_kwargs = dict()
+
+    new_basename = f'fn_{prefix}_'
     
     # compress the hypotheses with stitch
     res = compress(
@@ -191,35 +195,15 @@ def compress_and_transform(
         allow_single_task=True,
         cost_ivar=100,
         cost_var=100,
-        # NOTE: abstraction_prefix not working atm
-        # This is dealt with below
-        # abstraction_prefix=f'fn_{prefix}_',
+        abstraction_prefix=new_basename,
         **additional_kwargs
     )
-
-    new_basename = f'fn_{prefix}_'
-
-    # New abstractions might use name 'fn_[number]'
-    # so change names of abstractions
-    # to fn_{prefix}_[number]
-    # NOTE: Regex uses lookahead to it keeps original number
-    # NOTE: This regex does not replace previous
-    # abstractions with the form `fn_[number]_[number]`
-    replaced_fn_names = [
-        re.sub(
-            r'fn_(?=[\d]+(\s|$|\)|,))',
-            new_basename,
-            x
-        )
-        for x
-        in res.rewritten
-    ]
     
     # convert the abstractions into python
     python_rewritten = [
-        stitch_to_python(x)
+        abstraction_to_python(x.__str__())
         for x
-        in replaced_fn_names
+        in res.abstractions
     ]
     
     # add the found abstractions 
